@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Загрузка файла</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding-top: 120px;
+        }
+        .file-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;      /* центрируем весь блок */
+            gap: 20px;
+        }
+        .file-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* расстояние между input и иконкой */
+            margin-bottom: 10px; /* отступ между кнопкой "Выберите файл" и "Отправить файл" */
+        }
+        .info-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            border-radius: 50%;
+            background-color: #ccc; /* светло-серый */
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .file-info {
+            font-size: 0.9em; /* чуть меньше обычного текста */
+            color: gray;       /* серый цвет */
+
+        }
+        .result {
+            word-wrap: break-word;   /* перенос длинных слов */
+        }
+        .upload-form, #result {
+            max-width: 600px;   /* ограничиваем ширину формы и блока ошибок */
+            width: 100%;        /* занимает всю ширину до max-width */
+        }
+        #result h3 {
+            word-wrap: break-word;  /* перенос длинных слов */
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="upload-form">
+        <h2>Предсказание риска сердечного приступа</h2>
+         <p class="file-info">
+            Требования к файлу загрузки:
+        </p>
+        <ul class="file-info">
+            <li>формат .xls/.xlsx или .csv</li>
+            <li>25 столбцов-признаков (см примеры файлов и название признаков в папке /sample_inputs)</li>
+            <li>2 строки: название признаков, значения признаков для конкретного пациента</li>
+        </ul>
+
+        <hr style="border:0; border-top:1px solid #ccc; margin: 20px 0;">
+
+        <div class="file-wrapper">
+            <input type="file" id="file">
+        </div>
+
+        <button id="send" type="button">Отправить файл</button>
+    </div>
+
+    <div id="result">
+        <h3 style="color: red;">{{error_message}}</h3>
+        <h3 style="color: green;">{{success_message}}</h3>
+        <h3 style="color: purple;">{{risk_message | safe}}</h3>
+    </div>
+</div>
+
+    <script>
+        document.getElementById('send').onclick = async () => {
+        const f = document.getElementById('file').files[0];
+        if (!f) return alert("Выберите файл!");
+        const data = new FormData();
+        data.append("file", f);
+        const r = await fetch("/upload", {method:"POST", body:data})      // отправляет POST-запрос на /upload с телом data
+        const html = await r.text();
+        const parser = new DOMParser();                                  // вставляем только содержимое <div id="result">
+        const doc = parser.parseFromString(html, "text/html");
+        document.getElementById("result").innerHTML = doc.getElementById("result").innerHTML;
+    };
+    </script>
+
+</body>
+</html>
