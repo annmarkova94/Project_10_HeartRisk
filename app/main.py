@@ -1,13 +1,8 @@
-# стандартная библиотека
 import argparse
-
-# сторонние пакеты
 import uvicorn
 from fastapi import File, FastAPI, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
-# свои модули
 from model import HeartRiskModel
 from utils import drop_leak, fix_gender, check_file
 
