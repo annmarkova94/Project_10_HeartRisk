@@ -3,3 +3,4 @@ __pycache__/
 .idea/
 catboost_info
 *.pdf
+.ipynb_checkpoints/
